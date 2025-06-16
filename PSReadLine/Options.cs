@@ -30,6 +30,10 @@ namespace Microsoft.PowerShell
             {
                 Options.CustomPagerCommand = options.CustomPagerCommand;
             }
+            if (options.CustomPagerArguments != null)
+            {
+                Options.CustomPagerArguments = options.CustomPagerArguments;
+            }
             if (options.ContinuationPrompt != null)
             {
                 Options.ContinuationPrompt = options.ContinuationPrompt;

@@ -83,6 +83,7 @@ namespace Microsoft.PowerShell
         // Custom pager options
         public const bool DefaultUseCustomPager = false;
         public const string DefaultCustomPagerCommand = "";
+        public const string DefaultCustomPagerArguments = "";
         // Console colors
         public const ConsoleColor DefaultCommentColor   = ConsoleColor.DarkGreen;
         public const ConsoleColor DefaultKeywordColor   = ConsoleColor.Green;
@@ -205,6 +206,7 @@ namespace Microsoft.PowerShell
         {
             UseCustomPager = DefaultUseCustomPager;
             CustomPagerCommand = DefaultCustomPagerCommand;
+            CustomPagerArguments = DefaultCustomPagerArguments;
             ResetColors();
             EditMode = DefaultEditMode;
             ContinuationPrompt = DefaultContinuationPrompt;
@@ -296,18 +298,22 @@ namespace Microsoft.PowerShell
             };
         }
 
-        // <summary>
-        // Specifies whether to use a custom pager application or cmdlet or to use
-        // the built-in Microsoft.PowerShell.Pager library. Default is false.
-        // </summary>
+        /// <summary>
+        /// Specifies whether to use a custom pager application or cmdlet or to use
+        /// the built-in Microsoft.PowerShell.Pager library. Default is false.
+        /// </summary>
         public bool UseCustomPager { get; set; }
 
-        // <summary>
-        // Provides the path to the pager application/cmdlet and, if supported by
-        // the pager, the arguments necessary to jump to a specific regex. Use `$_`
-        // as the placeholder for the regex. Pager must have pipeline support.
-        // </summary>
+        /// <summary>
+        /// Provides the path to the pager application. Pager must have pipeline support.
+        /// </summary>
         public string CustomPagerCommand { get; set; }
+
+        /// <summary>
+        /// For pagers that support jumping to a specific location, the arguments required
+        /// to jump to a specific location by regex. Use <regex> as a placeholder.
+        /// </summary>
+        public string CustomPagerArguments { get; set; }
 
         public EditMode EditMode { get; set; }
 
@@ -675,6 +681,10 @@ namespace Microsoft.PowerShell
         [AllowEmptyString]
         [@AllowNull]
         public string CustomPagerCommand { get; set; }
+
+        [Parameter]
+        [AllowEmptyString]
+        public string CustomPagerArguments { get; set; }
 
         [Parameter]
         public EditMode EditMode
