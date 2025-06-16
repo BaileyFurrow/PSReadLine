@@ -664,6 +664,19 @@ namespace Microsoft.PowerShell
     public class SetPSReadLineOption : PSCmdlet
     {
         [Parameter]
+        public SwitchParameter UseCustomPager
+        {
+            get => _useCustomPager.GetValueOrDefault();
+            set => _useCustomPager = value;
+        }
+        internal SwitchParameter? _useCustomPager;
+
+        [Parameter]
+        [AllowEmptyString]
+        [@AllowNull]
+        public string CustomPagerCommand { get; set; }
+
+        [Parameter]
         public EditMode EditMode
         {
             get => _editMode.GetValueOrDefault();
