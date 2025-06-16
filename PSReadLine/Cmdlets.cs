@@ -80,6 +80,10 @@ namespace Microsoft.PowerShell
 
     public class PSConsoleReadLineOptions
     {
+        // Custom pager options
+        public const bool DefaultUseCustomPager = false;
+        public const string DefaultCustomPagerCommand = "";
+        // Console colors
         public const ConsoleColor DefaultCommentColor   = ConsoleColor.DarkGreen;
         public const ConsoleColor DefaultKeywordColor   = ConsoleColor.Green;
         public const ConsoleColor DefaultStringColor    = ConsoleColor.DarkCyan;
@@ -199,6 +203,8 @@ namespace Microsoft.PowerShell
 
         public PSConsoleReadLineOptions(string hostName, bool usingLegacyConsole)
         {
+            UseCustomPager = DefaultUseCustomPager;
+            CustomPagerCommand = DefaultCustomPagerCommand;
             ResetColors();
             EditMode = DefaultEditMode;
             ContinuationPrompt = DefaultContinuationPrompt;
@@ -289,6 +295,19 @@ namespace Microsoft.PowerShell
                 "Where-Object", "?", "where",
             };
         }
+
+        // <summary>
+        // Specifies whether to use a custom pager application or cmdlet or to use
+        // the built-in Microsoft.PowerShell.Pager library. Default is false.
+        // </summary>
+        public bool UseCustomPager { get; set; }
+
+        // <summary>
+        // Provides the path to the pager application/cmdlet and, if supported by
+        // the pager, the arguments necessary to jump to a specific regex. Use `$_`
+        // as the placeholder for the regex. Pager must have pipeline support.
+        // </summary>
+        public string CustomPagerCommand { get; set; }
 
         public EditMode EditMode { get; set; }
 
