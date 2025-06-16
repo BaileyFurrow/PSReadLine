@@ -22,6 +22,14 @@ namespace Microsoft.PowerShell
 
         private void SetOptionsInternal(SetPSReadLineOption options)
         {
+            if (options._useCustomPager.HasValue)
+            {
+                Options.UseCustomPager = options.UseCustomPager;
+            }
+            if (options.CustomPagerCommand != null)
+            {
+                Options.CustomPagerCommand = options.CustomPagerCommand;
+            }
             if (options.ContinuationPrompt != null)
             {
                 Options.ContinuationPrompt = options.ContinuationPrompt;
