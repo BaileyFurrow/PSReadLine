@@ -4,6 +4,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
@@ -19,8 +20,47 @@ namespace Microsoft.PowerShell
         [ExcludeFromCodeCoverage]
         void IPSConsoleReadLineMockableMethods.RenderFullHelp(string content, string regexPatternToScrollTo)
         {
-            _pager ??= new Pager();
-            _pager.Write(content, regexPatternToScrollTo);
+            if (Options.UseCustomPager)
+            {
+                string arguments;
+                if (string.IsNullOrEmpty(Options.CustomPagerArguments))
+                {
+                    arguments = "";
+                }
+                else
+                {
+                    arguments = Options.CustomPagerArguments.Replace("<regex>", regexPatternToScrollTo);
+                }
+                ProcessStartInfo psi = new ProcessStartInfo
+                {
+                    FileName = Options.CustomPagerCommand,
+                    Arguments = arguments,
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+                try
+                {
+                    using Process process = Process.Start(psi);
+                    if (process is not null)
+                    {
+                        using System.IO.StreamWriter writer = process.StandardInput;
+                        writer.Write(content);
+                    }
+                    process?.WaitForExit();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Failed to launch custom pager: " + ex.Message);
+                    _pager ??= new Pager();
+                    _pager.Write(content, regexPatternToScrollTo);
+                }
+            }
+            else
+            {
+                _pager ??= new Pager();
+                _pager.Write(content, regexPatternToScrollTo);
+            }
         }
 
         [ExcludeFromCodeCoverage]
