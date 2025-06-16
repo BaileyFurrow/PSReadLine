@@ -91,6 +91,15 @@ $d = [Microsoft.PowerShell.KeyHandler]::GetGroupingDescription($_.Group)
                 <PropertyName>EditMode</PropertyName>
               </ListItem>
               <ListItem>
+                <PropertyName>UseCustomPager</PropertyName>
+              </ListItem>
+              <ListItem>
+                <PropertyName>CustomPagerPath</PropertyName>
+              </ListItem>
+              <ListItem>
+                <PropertyName>CustomPagerArguments</PropertyName>
+              </ListItem>
+              <ListItem>
                 <PropertyName>AddToHistoryHandler</PropertyName>
               </ListItem>
               <ListItem>
