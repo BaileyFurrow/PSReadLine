@@ -174,7 +174,9 @@ namespace Microsoft.PowerShell
 
                 if (!string.IsNullOrEmpty(parameterName))
                 {
-                    regexPatternToScrollTo = $"-{parameterName} [<|\\[]";
+                    // Original regex ($"-{parameterName} [<|\\[]") would sometimes match parameter in syntax line.
+                    // New regex ($"^\\s*-{parameterName} [<|\\[]") only matches if it's at the beginning of the line.
+                    regexPatternToScrollTo = $"^\\s*-{parameterName} [<|\\[]";
                 }
 
                 _mockableMethods.RenderFullHelp(fullHelp, regexPatternToScrollTo);
