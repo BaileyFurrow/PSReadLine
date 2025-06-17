@@ -55,15 +55,24 @@ namespace Microsoft.PowerShell
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Failed to launch custom pager: " + ex.Message);
                     _pager ??= new Pager();
                     _pager.Write(content, regexPatternToScrollTo);
+                    throw new CustomPagerException(ex, Options.CustomPagerCommand);
                 }
             }
             else
             {
                 _pager ??= new Pager();
                 _pager.Write(content, regexPatternToScrollTo);
+            }
+        }
+
+        class CustomPagerException : Exception
+        {
+            public string CustomPagerCommand;
+            internal CustomPagerException(Exception innerException, string customPagerCommand) : base("", innerException)
+            {
+                CustomPagerCommand = customPagerCommand;
             }
         }
 

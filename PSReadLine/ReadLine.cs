@@ -429,6 +429,20 @@ namespace Microsoft.PowerShell
                     InvokePrompt();
                     Insert(lineBeforeCrash);
                 }
+                catch (CustomPagerException e)
+                {
+                    var oldColor = console.ForegroundColor;
+                    console.ForegroundColor = ConsoleColor.Red;
+                    console.WriteLine(
+                        string.Format(CultureInfo.CurrentUICulture, PSReadLineResources.OopsCustomPagerException, e.CustomPagerCommand, e.InnerException.Message));
+                    console.ForegroundColor = oldColor;
+
+                    var lineBeforeCrash = _singleton._buffer.ToString();
+                    _singleton.Initialize(runspace, _singleton._engineIntrinsics);
+                    InvokePrompt();
+                    Insert(lineBeforeCrash);
+
+                }
                 catch (Exception e)
                 {
                     // If we're running tests, just throw.
