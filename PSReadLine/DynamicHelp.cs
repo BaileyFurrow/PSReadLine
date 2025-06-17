@@ -6,6 +6,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Language;
@@ -22,32 +23,35 @@ namespace Microsoft.PowerShell
         {
             if (Options.UseCustomPager)
             {
+                string regexPlaceholder = "<regex>";
                 string arguments;
-                if (string.IsNullOrEmpty(Options.CustomPagerArguments))
+
+                // Both the CustomPagerArguments option and the regexPatternToScrollTo variable
+                // need to contain text in order for the arguments to function properly. Confirmed
+                // this with less.exe.
+                if (!string.IsNullOrEmpty(Options.CustomPagerArguments) && !string.IsNullOrEmpty(regexPatternToScrollTo))
                 {
-                    arguments = "";
+                    arguments = Options.CustomPagerArguments.Replace(regexPlaceholder, regexPatternToScrollTo);
                 }
                 else
                 {
-                    arguments = Options.CustomPagerArguments.Replace("<regex>", regexPatternToScrollTo);
+                    arguments = "";
                 }
+
+                string temp = Path.GetTempFileName();
+                File.WriteAllText(temp, content);
+
                 ProcessStartInfo psi = new ProcessStartInfo
                 {
                     FileName = Options.CustomPagerCommand,
-                    Arguments = arguments,
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
+                    Arguments = arguments + $" \"{temp}\"",
+                    UseShellExecute = false
                 };
                 try
                 {
                     using Process process = Process.Start(psi);
-                    if (process is not null)
-                    {
-                        using System.IO.StreamWriter writer = process.StandardInput;
-                        writer.Write(content);
-                    }
                     process?.WaitForExit();
+                    File.Delete(temp);
                 }
                 catch (Exception ex)
                 {
